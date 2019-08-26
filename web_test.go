@@ -2,14 +2,15 @@ package main
 
 import (
 	"bytes"
-	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
 func TestCreateEntry(t *testing.T) {
 
+	// Request for first entry
 	var jsonStr = []byte(`{"username": "bob", "unix_timestamp":1514761200,"event_uuid":"85ad929a-db03-4bf4-9541-8f728fa12e40", "ip_address":"91.207.175.104"}`)
 
 	req, err := http.NewRequest("POST", "/", bytes.NewBuffer(jsonStr))
@@ -30,7 +31,7 @@ func TestCreateEntry(t *testing.T) {
 			rr.Body.String(), expected)
 	}
 
-	// Second Request
+	// Request for second entry
 
 	jsonStr = []byte(`{"username": "bob", "unix_timestamp":1514851200,"event_uuid":"85ad929a-db03-4bf4-9541-8f728fa12e42", "ip_address":"24.242.71.20"}`)
 
@@ -52,7 +53,7 @@ func TestCreateEntry(t *testing.T) {
 			rr.Body.String(), expected)
 	}
 
-	// Third Request
+	// Request for third entry
 
 	jsonStr = []byte(`{"username": "bob", "unix_timestamp":1514764800,"event_uuid":"85ad929a-db03-4bf4-9541-8f728fa12e41", "ip_address":"206.81.252.7"}`)
 
@@ -73,19 +74,6 @@ func TestCreateEntry(t *testing.T) {
 		t.Errorf("handler returned unexpected body: got %v want %v",
 			rr.Body.String(), expected)
 	}
-}
 
-func TestCreateWrongIp(t *testing.T) {
-
-	var buf bytes.Buffer
-	log.SetOutput(&buf)
-
-	Fetch_loc_ip("333.333.333.333")
-
-	wantMsg := "ipAddress passed to Lookup cannot be nil"
-	msg := buf.String()
-	if msg != wantMsg {
-		t.Errorf("%#v, wanted %#v", msg, wantMsg)
-	}
-
+	os.Remove("./superman.db")
 }
